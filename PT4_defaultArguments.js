@@ -1,0 +1,91 @@
+//rock, paper, scissors
+const startGameBtn = document.getElementById("start-game-btn");
+
+const ROCK = "ROCK";
+const PAPER = "PAPER";
+const SCISSORS = "SCISSORS";
+const RESULT_DRAW = "It's a draw!";
+const RESULT_PLAYER_WINS = "You Win!";
+const RESULT_COMPUTER_WINS = "Computer Won!";
+
+const DEFAULT_USER_CHOICE = ROCK;
+let gameIsrunning = false;
+
+const getPlayerChoice = () => {
+    const selection = prompt(
+        `${ROCK},${PAPER} or ${SCISSORS}?`,
+        ""
+    ).toUpperCase();
+    if (selection !== ROCK && selection !== PAPER && selection !== SCISSORS) {
+        alert(
+            `"${selection}" is not a valid choice. We have chosen ${DEFAULT_USER_CHOICE} for you.`
+        );
+        return;
+        /*removed DEAULT_USER_CHOICE from the return statement 
+                   in order to use a feult argument later */
+    }
+    return selection;
+};
+
+const getComputerChoice = () => {
+    const randomValue = Math.random();
+    if (randomValue < 0.34) {
+        return ROCK;
+    } else if (randomValue < 0.67) {
+        return PAPER;
+    } else {
+        return SCISSORS;
+    }
+};
+
+const getWinner = (
+        cChoice,
+        pChoice = DEFAULT_USER_CHOICE
+        /*here we have assigned a default value to pChoice,
+                     incase UI is invalid. its important to have default values listed last
+                     as it could cause some errors with other params.
+                     
+                     however, in the console, this will still appear as 'undefined'*/
+    ) =>
+    cChoice === pChoice ?
+    RESULT_DRAW :
+    (pChoice === ROCK && cChoice) === SCISSORS ||
+    (pChoice === SCISSORS && cChoice) === PAPER ||
+    (pChoice === PAPER && cChoice) === ROCK ?
+    RESULT_PLAYER_WINS :
+    RESULT_COMPUTER_WINS;
+
+startGameBtn.addEventListener("click", () => {
+    if (gameIsrunning) {
+        return;
+    }
+    gameIsrunning = true;
+    console.log("Game is starting...");
+    const playerChoice = getPlayerChoice();
+    const computerChoice = getComputerChoice();
+    let winner;
+
+    if (playerChoice) {
+        winner = getWinner(computerChoice, playerChoice);
+    } else {
+        winner = getWinner(computerChoice);
+    }
+
+    console.log(winner);
+    console.log("Player choice:", playerChoice);
+    console.log("Computer choice:", computerChoice);
+
+    let message = `you picked ${
+    playerChoice || DEFAULT_USER_CHOICE
+  }, computer picked ${computerChoice}, you`;
+
+    if (winner === RESULT_DRAW) {
+        message = message + " drew!";
+    } else if (winner === RESULT_PLAYER_WINS) {
+        message = message + " won!";
+    } else {
+        message = message + " lost!";
+    }
+    alert(message);
+    gameIsrunning = false;
+});
